@@ -12,11 +12,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 export function FloatingMenu({
   x,
   y,
+  placement = 'auto',
   onClose,
   children
 }: {
   x: number
   y: number
+  placement?: 'auto' | 'above'
   onClose: () => void
   children: React.ReactNode
 }) {
@@ -34,7 +36,7 @@ export function FloatingMenu({
     const MARGIN = 8
     const r = el.getBoundingClientRect()
     let left = x
-    let top = y
+    let top = placement === 'above' ? Math.max(MARGIN, y - r.height - 6) : y
     if (left + r.width > window.innerWidth - MARGIN) {
       left = Math.max(MARGIN, window.innerWidth - r.width - MARGIN)
     }
@@ -42,7 +44,7 @@ export function FloatingMenu({
       top = Math.max(MARGIN, window.innerHeight - r.height - MARGIN)
     }
     setPos({ left, top, ready: true })
-  }, [x, y])
+  }, [x, y, placement])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {

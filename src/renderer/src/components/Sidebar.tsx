@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   CircleHelp,
+  FileInput,
+  FileOutput,
   Image as ImageIcon,
+  Menu as MenuIcon,
   Plus,
   Search,
   Settings,
@@ -31,6 +34,7 @@ function timeLabel(ts: number | null): string {
 interface RowProps {
   avatarSrc?: string
   icon?: LucideIcon
+  iconTone?: 'neutral' | 'image' | 'trash'
   name: string
   preview: string
   time?: string
@@ -43,6 +47,7 @@ interface RowProps {
 function Row({
   avatarSrc,
   icon,
+  iconTone,
   name,
   preview,
   time,
@@ -59,7 +64,7 @@ function Row({
         active ? 'bg-active' : 'hover:bg-hover'
       }`}
     >
-      <Avatar name={name} imageSrc={avatarSrc} icon={icon} size={40} />
+      <Avatar name={name} imageSrc={avatarSrc} icon={icon} iconTone={iconTone} size={40} />
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline justify-between gap-2">
           <span className="truncate text-[13px] font-medium text-fg">{name}</span>
@@ -103,10 +108,46 @@ export function Sidebar({
   const [menu, setMenu] = useState<{ x: number; y: number; category: CategoryWithMeta } | null>(
     null
   )
+  const [dataMenu, setDataMenu] = useState<{ x: number; y: number } | null>(null)
+  const [transferring, setTransferring] = useState<'import' | 'export' | null>(null)
+  const dataButtonRef = useRef<HTMLButtonElement>(null)
 
   const select = (id: ConversationId): void => {
     onNavigate()
     void selectConversation(id)
+  }
+
+  const toggleDataMenu = (): void => {
+    if (dataMenu) {
+      setDataMenu(null)
+      return
+    }
+    const rect = dataButtonRef.current?.getBoundingClientRect()
+    if (rect) setDataMenu({ x: rect.left, y: rect.top })
+  }
+
+  const runTransfer = async (kind: 'import' | 'export'): Promise<void> => {
+    setDataMenu(null)
+    setTransferring(kind)
+    try {
+      const result =
+        kind === 'import' ? await window.api.importData() : await window.api.exportData()
+      if (result.canceled) return
+      if (kind === 'import') {
+        await selectConversation(activeId)
+        showToast(
+          `已导入 ${result.messages} 条消息、${result.categories} 个新分类、${result.images} 张图片`
+        )
+      } else {
+        showToast(
+          `已导出 ${result.messages} 条消息、${result.categories} 个分类、${result.images} 张图片`
+        )
+      }
+    } catch (error) {
+      showToast(`${kind === 'import' ? '导入' : '导出'}失败：${(error as Error).message}`)
+    } finally {
+      setTransferring(null)
+    }
   }
 
   /**
@@ -175,6 +216,7 @@ export function Sidebar({
           <Row
             key={c.id}
             icon={c.isSystem ? ImageIcon : undefined}
+            iconTone={c.isSystem ? 'image' : undefined}
             name={c.name}
             preview={c.lastMessage ?? '暂无消息'}
             time={timeLabel(c.lastMessageAt)}
@@ -201,6 +243,7 @@ export function Sidebar({
         {trashCount > 0 && (
           <Row
             icon={Trash2}
+            iconTone="trash"
             name="垃圾箱"
             preview={`${trashCount} 项`}
             active={activeId === 'trash'}
@@ -219,15 +262,48 @@ export function Sidebar({
         </button>
       </nav>
 
-      <div className="no-drag shrink-0 border-t border-line p-2">
+      <div className="no-drag flex shrink-0 items-center gap-1 border-t border-line p-2">
+        <button
+          ref={dataButtonRef}
+          onClick={toggleDataMenu}
+          disabled={transferring !== null}
+          title="数据菜单"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-hover hover:text-fg disabled:opacity-40"
+        >
+          <MenuIcon size={18} strokeWidth={1.8} aria-hidden="true" />
+        </button>
         <button
           onClick={onOpenSettings}
-          className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] text-muted transition-colors hover:bg-hover"
+          className="flex h-9 flex-1 items-center gap-2 rounded-lg px-2.5 text-[13px] text-muted transition-colors hover:bg-hover"
         >
           <Settings size={17} strokeWidth={1.8} aria-hidden="true" />
           设置
         </button>
       </div>
+
+      {dataMenu && (
+        <FloatingMenu
+          x={dataMenu.x}
+          y={dataMenu.y}
+          placement="above"
+          onClose={() => setDataMenu(null)}
+        >
+          <button
+            onClick={() => void runTransfer('import')}
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] text-fg hover:bg-hover"
+          >
+            <FileInput size={16} strokeWidth={1.8} className="text-accent" aria-hidden="true" />
+            导入数据
+          </button>
+          <button
+            onClick={() => void runTransfer('export')}
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] text-fg hover:bg-hover"
+          >
+            <FileOutput size={16} strokeWidth={1.8} className="text-accent" aria-hidden="true" />
+            导出数据
+          </button>
+        </FloatingMenu>
+      )}
 
       {menu && (
         <FloatingMenu x={menu.x} y={menu.y} onClose={() => setMenu(null)}>

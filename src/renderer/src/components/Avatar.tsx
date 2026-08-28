@@ -41,12 +41,14 @@ export function Avatar({
   emoji,
   imageSrc,
   icon: Icon,
+  iconTone = 'neutral',
   size = 40
 }: {
   name: string
   emoji?: string | null
   imageSrc?: string
   icon?: LucideIcon
+  iconTone?: 'neutral' | 'image' | 'trash'
   size?: number
 }) {
   // 全应用统一圆形
@@ -65,10 +67,16 @@ export function Avatar({
   }
 
   if (Icon) {
+    const toneStyle =
+      iconTone === 'image'
+        ? { background: 'var(--c-image-avatar-bg)', color: 'var(--c-image-avatar-fg)' }
+        : iconTone === 'trash'
+          ? { background: 'var(--c-trash-avatar-bg)', color: 'var(--c-trash-avatar-fg)' }
+          : undefined
     return (
       <span
         title={name}
-        style={base}
+        style={{ ...base, ...toneStyle }}
         className="flex shrink-0 select-none items-center justify-center bg-raised text-muted"
       >
         <Icon size={Math.round(size * 0.48)} strokeWidth={1.8} aria-hidden="true" />

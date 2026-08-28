@@ -47,6 +47,9 @@ const api: Api = {
   saveSettings: (input: SettingsInput) => ipcRenderer.invoke(CH.saveSettings, input),
   testConnection: () => ipcRenderer.invoke(CH.testConnection),
 
+  exportData: () => ipcRenderer.invoke(CH.exportData),
+  importData: () => ipcRenderer.invoke(CH.importData),
+
   onMessageUpdated: (cb: (message: Message) => void) => {
     const listener = (_e: unknown, message: Message): void => cb(message)
     ipcRenderer.on(CH.messageUpdated, listener)

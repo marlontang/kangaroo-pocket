@@ -1,5 +1,7 @@
 import { DatabaseSync } from 'node:sqlite'
 import type {
+  BackupCategory,
+  BackupMessage,
   Category,
   CategoryInput,
   CategoryWithMeta,
@@ -9,6 +11,16 @@ import type {
   MessageImage,
   MessageStatus
 } from '../shared/types'
+
+export interface ImportedMessage extends Omit<BackupMessage, 'image'> {
+  image: MessageImage | null
+}
+
+export interface ImportSummary {
+  categories: number
+  messages: number
+  images: number
+}
 
 /**
  * 「未分类」= 已经尝试过分类但失败/无匹配的消息。
@@ -341,6 +353,87 @@ export function createDb(filename: string) {
     return rows.map(toMessage).reverse()
   }
 
+  /** 备份专用：包含正常消息与垃圾箱，不受分页上限影响。 */
+  function exportSnapshot(): { categories: Category[]; messages: Message[] } {
+    const rows = db.prepare('SELECT * FROM messages ORDER BY id').all() as unknown as MessageRow[]
+    return { categories: listCategories(), messages: rows.map(toMessage) }
+  }
+
+  /**
+   * 合并导入：同名分类复用，消息按备份顺序追加。整个数据库写入在一个事务中，
+   * 不会出现只导入一半的状态。图片文件由调用方先安全落盘。
+   */
+  function importBackup(
+    categories: BackupCategory[],
+    messages: ImportedMessage[]
+  ): ImportSummary {
+    let categoriesCreated = 0
+    let images = 0
+    const categoryMap = new Map<number, number>()
+
+    db.exec('BEGIN IMMEDIATE')
+    try {
+      for (const category of categories) {
+        let target = findCategoryByName(category.name)
+        if (!target) {
+          target = createCategory({
+            name: category.name,
+            description: category.description,
+            isSystem: category.isSystem && category.name === IMAGE_CATEGORY_NAME
+          })
+          categoriesCreated++
+        }
+        categoryMap.set(category.sourceId, target.id)
+      }
+
+      const insert = db.prepare(
+        'INSERT INTO messages (content, status, created_at, category_id, classified_at, error,' +
+          ' image_url, image_w, image_h, image_name, image_bytes, deleted_at)' +
+          ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      )
+
+      for (const message of messages) {
+        const categoryId =
+          message.categorySourceId === null
+            ? null
+            : (categoryMap.get(message.categorySourceId) ?? null)
+        let status = message.status
+        let error = message.error
+
+        // 导入不会偷偷触发模型调用；原本尚未完成的任务转为可手动重试的未分类。
+        if (status === 'pending') {
+          status = 'failed'
+          error = '从备份导入，尚未分类'
+        } else if (message.categorySourceId !== null && categoryId === null) {
+          status = 'failed'
+          error = '备份中的原分类不存在'
+        }
+
+        insert.run(
+          message.content,
+          status,
+          message.createdAt,
+          categoryId,
+          message.classifiedAt,
+          error,
+          message.image?.url ?? null,
+          message.image?.width ?? null,
+          message.image?.height ?? null,
+          message.image?.name ?? null,
+          message.image?.bytes ?? null,
+          message.deletedAt
+        )
+        if (message.image) images++
+      }
+
+      db.exec('COMMIT')
+      return { categories: categoriesCreated, messages: messages.length, images }
+    } catch (error) {
+      db.exec('ROLLBACK')
+      throw error
+    }
+  }
+
   /** 手动指定分类 —— 标记为 manual，后续自动分类不会覆盖 */
   function moveMessage(id: number, categoryId: number): Message {
     if (!getCategory(categoryId)) throw new Error('分类不存在')
@@ -621,6 +714,8 @@ export function createDb(filename: string) {
     getMessage,
     insertMessage,
     listMessages,
+    exportSnapshot,
+    importBackup,
     moveMessage,
     applyClassification,
     markPending,

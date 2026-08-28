@@ -125,6 +125,100 @@ describe('未分类会话', () => {
   })
 })
 
+describe('数据备份与合并导入', () => {
+  it('导出快照包含普通消息和垃圾箱消息', () => {
+    db.seedIfEmpty()
+    const life = db.listCategories().find((c) => c.name === '生活')!
+    const kept = db.insertMessage('保留的消息')
+    db.applyClassification(kept.id, life.id)
+    const deleted = db.insertMessage('垃圾箱里的消息')
+    db.trashMessage(deleted.id)
+
+    const snapshot = db.exportSnapshot()
+    expect(snapshot.categories.map((c) => c.name)).toContain('图片')
+    expect(snapshot.messages.map((m) => m.content)).toEqual(['保留的消息', '垃圾箱里的消息'])
+    expect(snapshot.messages[1].deletedAt).not.toBeNull()
+  })
+
+  it('合并导入复用同名分类、创建新分类并保留删除状态', () => {
+    db.seedIfEmpty()
+    const existingLife = db.listCategories().find((c) => c.name === '生活')!
+    const backupCategories = [
+      {
+        sourceId: 10,
+        name: '生活',
+        description: '来自备份的生活分类',
+        sortOrder: 1,
+        createdAt: 100,
+        isSystem: false
+      },
+      {
+        sourceId: 11,
+        name: '项目A',
+        description: 'A 项目',
+        sortOrder: 2,
+        createdAt: 101,
+        isSystem: false
+      }
+    ]
+    const summary = db.importBackup(backupCategories, [
+      {
+        sourceId: 20,
+        content: '生活消息',
+        categorySourceId: 10,
+        status: 'classified',
+        createdAt: 200,
+        classifiedAt: 201,
+        error: null,
+        deletedAt: null,
+        image: null
+      },
+      {
+        sourceId: 21,
+        content: '已删除的项目消息',
+        categorySourceId: 11,
+        status: 'manual',
+        createdAt: 202,
+        classifiedAt: 203,
+        error: null,
+        deletedAt: 204,
+        image: null
+      }
+    ])
+
+    expect(summary).toEqual({ categories: 1, messages: 2, images: 0 })
+    expect(db.listCategories().filter((c) => c.name === '生活')).toHaveLength(1)
+    expect(db.listMessages({ categoryId: existingLife.id }).map((m) => m.content)).toContain(
+      '生活消息'
+    )
+    expect(db.listMessages({ categoryId: 'trash' }).map((m) => m.content)).toEqual([
+      '已删除的项目消息'
+    ])
+  })
+
+  it('导入 pending 消息时转为可重试的未分类，不自动调用模型', () => {
+    const summary = db.importBackup([], [
+      {
+        sourceId: 1,
+        content: '导入时尚未分类',
+        categorySourceId: null,
+        status: 'pending',
+        createdAt: 100,
+        classifiedAt: null,
+        error: null,
+        deletedAt: null,
+        image: null
+      }
+    ])
+
+    expect(summary.messages).toBe(1)
+    const imported = db.listMessages({ categoryId: 'unclassified' })[0]
+    expect(imported.status).toBe('failed')
+    expect(imported.error).toContain('从备份导入')
+    expect(db.countPendingMessages()).toBe(0)
+  })
+})
+
 describe('分类重名', () => {
   it('创建同名分类时给出可读错误', () => {
     db.createCategory({ name: '项目A' })

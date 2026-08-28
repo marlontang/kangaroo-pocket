@@ -29,6 +29,9 @@ export const CH = {
   saveSettings: 'settings:save',
   testConnection: 'settings:test',
 
+  exportData: 'data:export',
+  importData: 'data:import',
+
   /** 主进程 → 渲染进程推送 */
   messageUpdated: 'push:messageUpdated'
 } as const

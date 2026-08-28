@@ -8,6 +8,7 @@ import { getApiKey, getSettings, saveSettings } from './settings'
 import { testConnection } from './llm'
 import { deleteImage, saveImage } from './images'
 import { discoverCategories } from './discovery'
+import { exportData, importData } from './backup'
 import type {
   CategoryInput,
   ConversationId,
@@ -147,4 +148,8 @@ export function registerIpc({ db, classifier, bulk, broadcast }: IpcDeps): void 
     const s = getSettings()
     return testConnection({ baseUrl: s.baseUrl, model: s.model, apiKey: getApiKey() })
   })
+
+  // ── 数据备份 ──────────────────────────────────────────
+  handle(CH.exportData, () => exportData(db))
+  handle(CH.importData, () => importData(db))
 }

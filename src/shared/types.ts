@@ -139,6 +139,51 @@ export interface ImageInput {
   mime: string
 }
 
+export interface BackupCategory {
+  sourceId: number
+  name: string
+  description: string
+  sortOrder: number
+  createdAt: number
+  isSystem: boolean
+}
+
+export interface BackupImage {
+  name: string
+  width: number
+  height: number
+  bytes: number
+  dataBase64: string
+}
+
+export interface BackupMessage {
+  sourceId: number
+  content: string
+  categorySourceId: number | null
+  status: MessageStatus
+  createdAt: number
+  classifiedAt: number | null
+  error: string | null
+  deletedAt: number | null
+  image: BackupImage | null
+}
+
+export interface BackupFile {
+  format: 'kangaroo-pocket-backup'
+  version: 1
+  exportedAt: string
+  categories: BackupCategory[]
+  messages: BackupMessage[]
+}
+
+export interface DataTransferResult {
+  canceled: boolean
+  filePath?: string
+  categories: number
+  messages: number
+  images: number
+}
+
 /** 主进程推送给渲染进程的事件 */
 export interface MessageUpdatedEvent {
   message: Message
@@ -182,6 +227,11 @@ export interface Api {
   getSettings(): Promise<Settings>
   saveSettings(input: SettingsInput): Promise<Settings>
   testConnection(): Promise<TestConnectionResult>
+
+  /** 导出版本化 JSON 备份；永不包含 API Key */
+  exportData(): Promise<DataTransferResult>
+  /** 从 JSON 备份合并导入，不覆盖现有数据 */
+  importData(): Promise<DataTransferResult>
 
   /** 返回取消订阅函数 */
   onMessageUpdated(cb: (message: Message) => void): () => void

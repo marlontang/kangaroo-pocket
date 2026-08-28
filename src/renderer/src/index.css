@@ -19,6 +19,10 @@
   --c-accent: #148fff;
   --c-danger: #e5484d;
   --c-warn: #b7791f;
+  --c-image-avatar-bg: #d9f4ee;
+  --c-image-avatar-fg: #087e70;
+  --c-trash-avatar-bg: #ffe3df;
+  --c-trash-avatar-fg: #c43f36;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +40,10 @@
     --c-accent: #148fff;
     --c-danger: #ff6b6e;
     --c-warn: #e0a03c;
+    --c-image-avatar-bg: #173e38;
+    --c-image-avatar-fg: #68d7c5;
+    --c-trash-avatar-bg: #4a2928;
+    --c-trash-avatar-fg: #ff8b82;
   }
 }
 
