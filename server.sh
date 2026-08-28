@@ -20,7 +20,6 @@ cd "$ROOT"
 
 APP_NAME="kangaroo-pocket"
 VERSION="$(node -p "require('./package.json').version" 2>/dev/null || echo "0.0.0")"
-ELECTRON_BIN="$(node -p "require('electron')" 2>/dev/null || true)"
 
 RELEASE_DIR="$ROOT/release"
 LOG_DIR="$ROOT/logs"
@@ -159,9 +158,12 @@ cmd_start() {
   else
     ensure_deps
     build_if_stale
-    [[ -n "$ELECTRON_BIN" && -x "$ELECTRON_BIN" ]] || die "找不到 Electron，请先 npm install"
+    local electron_bin
+    electron_bin="$(node -p "require('electron')" 2>/dev/null || true)"
+    [[ -n "$electron_bin" && -x "$electron_bin" ]] || \
+      die "Electron 包已安装，但可执行文件不存在；请删除 node_modules/electron 后重新运行 npm install"
     info "启动最新代码（out/ 构建产物）"
-    target="$ELECTRON_BIN"
+    target="$electron_bin"
   fi
 
   # 直接拉起可执行文件（而非 open），这样脚本能拿到 PID 用于 stop/status
