@@ -40,7 +40,7 @@ export function fileNameFromUrl(url: string): string | null {
  * 保存图片到 userData/images 并返回可渲染的描述。
  * 除了看后缀，还会真正解码一次——文件名骗得了后缀，骗不过解码器。
  */
-export function saveImage(input: ImageInput): MessageImage {
+export function saveImage(input: ImageInput, maxBytes = MAX_BYTES): MessageImage {
   if (!isImageFile(input.name)) {
     throw new Error(
       `不支持的文件类型：${extname(input.name) || '无后缀'}（仅支持 png / jpg / gif / webp / bmp）`
@@ -48,8 +48,9 @@ export function saveImage(input: ImageInput): MessageImage {
   }
   const buf = Buffer.from(input.bytes)
   if (buf.byteLength === 0) throw new Error('图片内容为空')
-  if (buf.byteLength > MAX_BYTES) {
-    throw new Error(`图片过大（${(buf.byteLength / 1024 / 1024).toFixed(1)}MB），上限 20MB`)
+  if (buf.byteLength > maxBytes) {
+    const limit = maxBytes === MAX_BYTES ? '20MB' : '1TB'
+    throw new Error(`图片过大（${(buf.byteLength / 1024 / 1024).toFixed(1)}MB），上限 ${limit}`)
   }
 
   const decoded = nativeImage.createFromBuffer(buf)

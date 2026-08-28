@@ -14,8 +14,7 @@ import { deleteImage, readImage, saveImage } from './images'
 
 const FORMAT = 'kangaroo-pocket-backup'
 const VERSION = 1
-const MAX_BACKUP_BYTES = 512 * 1024 * 1024
-const MAX_IMAGE_BYTES = 20 * 1024 * 1024
+const MAX_BACKUP_BYTES = 1024 ** 4
 const STATUSES = new Set<MessageStatus>(['pending', 'classified', 'manual', 'failed'])
 
 function backupFileName(): string {
@@ -79,7 +78,11 @@ export async function exportData(db: Db): Promise<DataTransferResult> {
     messages
   }
 
-  writeFileSync(picked.filePath, JSON.stringify(backup, null, 2), 'utf-8')
+  const serialized = JSON.stringify(backup, null, 2)
+  if (Buffer.byteLength(serialized, 'utf-8') > MAX_BACKUP_BYTES) {
+    throw new Error('备份文件超过 1 TB，无法导出')
+  }
+  writeFileSync(picked.filePath, serialized, 'utf-8')
   return {
     canceled: false,
     filePath: picked.filePath,
@@ -97,7 +100,7 @@ export async function importData(db: Db): Promise<DataTransferResult> {
   })
   const filePath = picked.filePaths[0]
   if (picked.canceled || !filePath) return emptyResult(true)
-  if (statSync(filePath).size > MAX_BACKUP_BYTES) throw new Error('备份文件超过 512 MB，无法导入')
+  if (statSync(filePath).size > MAX_BACKUP_BYTES) throw new Error('备份文件超过 1 TB，无法导入')
 
   let raw: unknown
   try {
@@ -113,7 +116,7 @@ export async function importData(db: Db): Promise<DataTransferResult> {
       let image = null
       if (message.image) {
         const bytes = decodeImage(message.image)
-        image = saveImage({ bytes, name: message.image.name, mime: '' })
+        image = saveImage({ bytes, name: message.image.name, mime: '' }, MAX_BACKUP_BYTES)
         savedUrls.push(image.url)
       }
       return { ...message, image }
@@ -133,10 +136,6 @@ function validateBackup(value: unknown): BackupFile {
   if (!Array.isArray(value.categories) || !Array.isArray(value.messages)) {
     throw new Error('备份缺少分类或消息数据')
   }
-  if (value.categories.length > 10_000 || value.messages.length > 1_000_000) {
-    throw new Error('备份中的数据条数超出限制')
-  }
-
   const categoryIds = new Set<number>()
   const categories = value.categories.map((item, index) => {
     if (!isRecord(item)) throw new Error(`第 ${index + 1} 个分类格式错误`)
@@ -195,12 +194,11 @@ function validateBackup(value: unknown): BackupFile {
 
 function validateImage(value: unknown, messageId: number): BackupImage {
   if (!isRecord(value)) throw new Error(`消息 ${messageId} 的图片格式错误`)
-  const dataBase64 = requiredString(value.dataBase64, '图片数据', MAX_IMAGE_BYTES * 2)
+  const dataBase64 = requiredString(value.dataBase64, '图片数据', Number.MAX_SAFE_INTEGER)
   if (dataBase64.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(dataBase64)) {
     throw new Error(`消息 ${messageId} 的图片数据损坏`)
   }
   const bytes = positiveInteger(value.bytes, '图片大小')
-  if (bytes > MAX_IMAGE_BYTES) throw new Error(`消息 ${messageId} 的图片超过 20 MB`)
   return {
     name: requiredString(value.name, '图片名称', 500),
     width: positiveInteger(value.width, '图片宽度'),
@@ -212,7 +210,7 @@ function validateImage(value: unknown, messageId: number): BackupImage {
 
 function decodeImage(image: BackupImage): Uint8Array {
   const bytes = Buffer.from(image.dataBase64, 'base64')
-  if (bytes.byteLength !== image.bytes || bytes.byteLength > MAX_IMAGE_BYTES) {
+  if (bytes.byteLength !== image.bytes) {
     throw new Error(`图片数据大小不匹配：${image.name}`)
   }
   return new Uint8Array(bytes)
