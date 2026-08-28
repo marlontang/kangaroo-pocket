@@ -102,12 +102,12 @@ export const useStore = create<State>((set, get) => ({
   async send(content, image) {
     const { activeId } = get()
     // 在分类会话里发的消息直接归入该分类 —— 选了会话就等于指定了归属，
-    // 不必再让 AI 猜。小秘书是「全部消息」视图，照样能看到。
+    // 不必再让 AI 猜。袋鼠是「全部消息」视图，照样能看到。
     const message = await window.api.sendMessage(content, {
       image,
       ...(typeof activeId === 'number' ? { categoryId: activeId } : {})
     })
-    // 小秘书是总时间线，消息立刻出现；分类会话要等分类结果才显示
+    // 袋鼠是总时间线，消息立刻出现；分类会话要等分类结果才显示
     if (belongsTo(message, get().activeId)) {
       set({ messages: insertSorted(get().messages, message) })
     }

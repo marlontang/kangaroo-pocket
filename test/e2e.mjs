@@ -95,10 +95,10 @@ async function screenshot(name) {
   return path
 }
 
-/** 切回小秘书会话 —— 只有这里有输入框（分类会话是只读过滤视图） */
+/** 切回袋鼠会话 —— 只有这里有输入框（分类会话是只读过滤视图） */
 async function gotoSecretary() {
   await evaluate(`
-    const btn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('小秘书'))
+    const btn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('袋鼠'))
     if (btn) btn.click()
     return true
   `)
@@ -148,8 +148,8 @@ try {
   check('种子分类已创建', seedCats.includes('生活') && seedCats.includes('工作'), seedCats.join('、'))
   check('内置「图片」分类已创建', seedCats.includes('图片'))
   check(
-    '界面渲染出小秘书会话',
-    await evaluate('return document.body.innerText.includes("小秘书")')
+    '界面渲染出袋鼠会话',
+    await evaluate('return document.body.innerText.includes("袋鼠")')
   )
   await screenshot('01-启动')
 
@@ -175,7 +175,7 @@ try {
   for (const c of cases) await sendViaUi(c.text)
 
   check(
-    '4 条消息立即出现在小秘书时间线（不等 AI）',
+    '4 条消息立即出现在袋鼠时间线（不等 AI）',
     (await evaluate('return (await window.api.listMessages({categoryId:"all"})).length')) === 4
   )
   await screenshot('02-发送后分类中')

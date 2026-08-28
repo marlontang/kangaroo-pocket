@@ -183,7 +183,7 @@ export function Composer({ placeholder }: { placeholder?: string }) {
         onCompositionStart={() => (composingRef.current = true)}
         onCompositionEnd={() => (composingRef.current = false)}
         onKeyDown={onKeyDown}
-        placeholder={placeholder ?? '发送给小秘书，它会自动帮你归类…'}
+        placeholder={placeholder ?? '发送给袋鼠，它会自动帮你归类…'}
         className="selectable scroll-thin block w-full resize-none bg-transparent px-1 text-[14px] leading-relaxed text-fg outline-none placeholder:text-muted disabled:opacity-60"
         style={{ maxHeight: MAX_HEIGHT }}
       />

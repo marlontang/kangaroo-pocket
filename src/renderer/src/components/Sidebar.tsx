@@ -141,7 +141,7 @@ export function Sidebar({
       <nav className="no-drag scroll-thin flex-1 space-y-0.5 overflow-y-auto px-2 pb-2">
         <Row
           emoji="🗂️"
-          name="小秘书"
+          name="袋鼠"
           preview="全部消息 · 发送入口"
           active={activeId === 'all'}
           onClick={() => select('all')}

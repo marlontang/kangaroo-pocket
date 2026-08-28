@@ -57,7 +57,7 @@ export interface CategoryWithMeta extends Category {
   unreadCount: number
 }
 
-/** 特殊会话 id：小秘书（全部消息）与未分类 */
+/** 特殊会话 id：袋鼠（全部消息）与未分类 */
 export type ConversationId = number | 'all' | 'unclassified' | 'trash'
 
 export interface ListMessagesOptions {

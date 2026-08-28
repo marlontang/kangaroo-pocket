@@ -89,8 +89,8 @@ function EmptyState({ isSecretary, isTrash }: { isSecretary: boolean; isTrash?: 
         {isTrash
           ? '垃圾箱是空的。删除的消息会先放到这里，随时可以还原。'
           : isSecretary
-            ? '把任何想记的东西发给小秘书，它会自动归类到对应的联系人。'
-            : '这个分类还没有消息。到小秘书那里发送，符合条件的会自动出现在这里。'}
+            ? '把任何想记的东西发给袋鼠，它会自动归类到对应的联系人。'
+            : '这个分类还没有消息。到袋鼠那里发送，符合条件的会自动出现在这里。'}
       </p>
       {isSecretary && settings && !settings.hasApiKey && (
         <p className="mt-1 rounded-lg border border-line px-3 py-1.5 text-xs text-warn">
@@ -115,7 +115,7 @@ export function ChatView() {
   const canCompose = isSecretary || typeof activeId === 'number'
   const active = categories.find((c) => c.id === activeId)
   const title = isSecretary
-    ? '小秘书'
+    ? '袋鼠'
     : isTrash
       ? '垃圾箱'
       : activeId === 'unclassified'
@@ -126,7 +126,7 @@ export function ChatView() {
     : isTrash
       ? '删除的消息暂存在这里，可以还原'
       : activeId === 'unclassified'
-        ? '小秘书没能归类的消息，右键可手动指定'
+        ? '袋鼠没能归类的消息，右键可手动指定'
         : (active?.description ?? '')
 
   // 切会话或有新消息时贴底；向上翻页加载历史时保持视口位置不跳
@@ -192,7 +192,7 @@ export function ChatView() {
         <TrashBar />
       ) : (
         <div className="shrink-0 border-t border-line px-4 py-3 text-center text-xs text-muted">
-          小秘书没能归类的消息会出现在这里，右键可手动指定分类
+          袋鼠没能归类的消息会出现在这里，右键可手动指定分类
         </div>
       )}
     </section>

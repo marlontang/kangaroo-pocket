@@ -250,7 +250,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
 
             <section>
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-[13px] font-medium text-fg">小秘书 System Prompt</h3>
+                <h3 className="text-[13px] font-medium text-fg">袋鼠 System Prompt</h3>
                 <button
                   onClick={() => {
                     setPrompt(DEFAULT_SECRETARY_PROMPT)

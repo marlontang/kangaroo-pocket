@@ -16,6 +16,9 @@ registerImageScheme()
 let mainWindow: BrowserWindow | null = null
 
 function migrateLegacyUserData(): void {
+  // Tests and temporary launches provide an isolated directory intentionally.
+  if (app.commandLine.hasSwitch('user-data-dir')) return
+
   const userData = app.getPath('userData')
   const database = join(userData, 'kangaroo-pocket.db')
   if (existsSync(database)) return

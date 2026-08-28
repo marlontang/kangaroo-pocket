@@ -51,11 +51,11 @@ try {
   // ══════════════════════════════════════════════════════
   group('侧栏导航')
 
-  check('初始停在「小秘书」会话', await seesText(cdp, '全部消息 · 在这里发送'))
+  check('初始停在「袋鼠」会话', await seesText(cdp, '全部消息 · 在这里发送'))
 
   check('点击「生活」切换会话', (await clickBtnLike(cdp, '生活')) && (await sleep(600), await seesText(cdp, '日常生活、购物')))
   check('分类会话没有输入框（只读过滤视图）', !(await evaluate('return !!document.querySelector("textarea")')))
-  check('点击「小秘书」切回总时间线', (await clickBtnLike(cdp, '小秘书')) && (await sleep(600), await evaluate('return !!document.querySelector("textarea")')))
+  check('点击「袋鼠」切回总时间线', (await clickBtnLike(cdp, '袋鼠')) && (await sleep(600), await evaluate('return !!document.querySelector("textarea")')))
 
   // ══════════════════════════════════════════════════════
   group('新建分类弹窗')
@@ -202,7 +202,7 @@ try {
     await new Promise(r => setTimeout(r, 200))
     window.__t.btn('恢复默认').click()
     await new Promise(r => setTimeout(r, 300))
-    return ta.value.includes('私人信息分拣秘书')
+    return ta.value.includes('袋鼠信息分拣助手')
   `))
 
   check('修改模型名并「保存」后持久化', await evaluate(`
@@ -646,7 +646,7 @@ try {
   check('垃圾箱清空后侧栏入口消失', await cdp.waitFor(`!window.__t.btnLike('垃圾箱')`, 15000))
 
   await evaluate(`
-    window.__t.btnLike('小秘书').click()
+    window.__t.btnLike('袋鼠').click()
     await new Promise(r => setTimeout(r, 600))
     ${openMenu}
     window.__t.btn('删除').click()
@@ -671,7 +671,7 @@ try {
 
   check('「清空垃圾箱」需要行内二次确认，可取消', await evaluate(`
     // 先制造两条垃圾
-    window.__t.btnLike('小秘书').click()
+    window.__t.btnLike('袋鼠').click()
     await new Promise(r => setTimeout(r, 600))
     for (const txt of ['垃圾测试一', '垃圾测试二']) {
       window.__t.setValue(document.querySelector('textarea'), txt)
@@ -714,9 +714,9 @@ try {
 
   await cdp.screenshot('09-垃圾箱')
 
-  // 回到小秘书，后续用例需要输入框
+  // 回到袋鼠，后续用例需要输入框
   await evaluate(`
-    window.__t.btnLike('小秘书').click()
+    window.__t.btnLike('袋鼠').click()
     await new Promise(r => setTimeout(r, 600))
     return true
   `)
@@ -788,10 +788,10 @@ try {
   // 发送一条注定分类失败的消息（指向一个连不上的地址）
   const pendingNotCounted = await evaluate(`
     await window.api.saveSettings({ baseUrl: 'http://127.0.0.1:9/v1' })
-    // 确保没有遮罩残留，并回到有输入框的小秘书会话
+    // 确保没有遮罩残留，并回到有输入框的袋鼠会话
     window.__t.key(document.body, 'Escape')
     await new Promise(r => setTimeout(r, 300))
-    window.__t.btnLike('小秘书').click()
+    window.__t.btnLike('袋鼠').click()
     await new Promise(r => setTimeout(r, 600))
     if (!document.querySelector('textarea')) return 'no-textarea'
     // 用基线对比而不是绝对值：前面的用例可能已经留下未分类消息

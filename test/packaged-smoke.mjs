@@ -83,7 +83,7 @@ try {
 
   console.log('\n打包产物检查')
   check('页面从本地文件加载成功', await evaluate('return document.readyState === "complete"'))
-  check('界面渲染正常', await evaluate('return document.body.innerText.includes("小秘书")'))
+  check('界面渲染正常', await evaluate('return document.body.innerText.includes("袋鼠")'))
   check('IPC 桥接可用', (await evaluate('return await window.api.ping()')) === 'pong')
   const cats = await evaluate('return (await window.api.listCategories()).map(c => c.name)')
   check('种子分类已写入', cats.includes('生活') && cats.includes('工作'), cats.join('、'))

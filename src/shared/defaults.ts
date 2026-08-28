@@ -3,7 +3,7 @@
 export const DEFAULT_BASE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1'
 export const DEFAULT_MODEL = 'qwen3.6-flash'
 
-export const DEFAULT_SECRETARY_PROMPT = `你是用户的私人信息分拣秘书。用户会把各种备忘信息发给你，你唯一的任务是判断每条信息属于哪个分类。
+export const DEFAULT_SECRETARY_PROMPT = `你是用户的袋鼠信息分拣助手。用户会把各种备忘信息发给你，你唯一的任务是判断每条信息属于哪个分类。
 
 判断规则：
 1. 只依据消息内容本身判断，不要过度推测。

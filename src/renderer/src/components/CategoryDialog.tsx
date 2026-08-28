@@ -132,7 +132,7 @@ export function CategoryDialog({
         />
 
         <label className="mb-1 block text-xs text-muted">
-          分类说明 —— 告诉小秘书什么样的消息该归到这里
+          分类说明 —— 告诉袋鼠什么样的消息该归到这里
         </label>
         <textarea
           value={description}
