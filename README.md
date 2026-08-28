@@ -6,6 +6,10 @@ kangaroo-pocket 是一款本地优先的桌面信息收纳工具。把文字或�
 
 应用支持 macOS 和 Windows，基于 Electron、React、TypeScript 与本地 SQLite 构建。消息数据保存在本机；AI 只负责判断分类，不会改写原始内容。
 
+<p align="center">
+  <img src="docs/assets/kangaroo-pocket-overview.png" alt="kangaroo-pocket 三栏主界面" width="1100">
+</p>
+
 ## 功能特性
 
 - 消息先落库、后分类，断网或模型不可用时内容仍然安全保存
@@ -45,7 +49,7 @@ npm run dev
 ./server.sh start
 ```
 
-首次运行后，在「设置」中填写模型服务信息。默认配置适用于阿里云百炼：
+首次运行后，在「小袋鼠」中填写模型服务信息。默认配置适用于阿里云百炼：
 
 | 配置项 | 默认值 |
 | --- | --- |
@@ -66,7 +70,7 @@ QWEN_API_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 1. 在「袋鼠」会话中发送文字或图片，内容会立即保存在本地。
 2. AI 完成判断后，消息会显示分类标签，并出现在对应分类会话中。
 3. 分类错误时，右键消息选择「移动到」或「重新分类」。
-4. 使用设置页的「识别分类」生成分类方案，或用「开始分类」重跑历史消息。
+4. 使用「小袋鼠」中的「识别分类」生成分类方案，或用「开始分类」重跑历史消息。
 5. 使用 `Command/Ctrl + F` 搜索全部历史消息。
 6. 点击侧栏底部的菜单按钮，可以导入或导出完整数据备份。
 
