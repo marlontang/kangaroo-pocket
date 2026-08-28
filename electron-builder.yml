@@ -1,0 +1,54 @@
+appId: com.tango.collecthistory
+productName: 收藏小秘书
+copyright: Copyright © 2026 tango
+
+directories:
+  buildResources: build
+  output: release
+
+files:
+  - out/**
+  - package.json
+
+# 全部依赖都被 vite 打进 bundle（无原生模块），无需额外解包
+asar: true
+
+mac:
+  category: public.app-category.productivity
+  target:
+    - target: dmg
+      arch: [arm64]
+  icon: build/icon.icns
+  darkModeSupport: true
+  # 未做代码签名与公证：自用场景下首次打开需右键 →「打开」
+  identity: null
+
+dmg:
+  title: 收藏小秘书
+  contents:
+    - x: 140
+      y: 200
+      type: file
+    - x: 400
+      y: 200
+      type: link
+      path: /Applications
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: build/icon.png
+  # 只跳过代码签名，保留图标与版本信息的写入
+  # （用 signAndEditExecutable: false 会连图标一起跳过，exe 会变成 Electron 默认图标）
+  # 未签名：Windows 首次运行会弹 SmartScreen，点「更多信息」→「仍要运行」
+  signExecutable: false
+
+nsis:
+  oneClick: false # 显示安装向导，让用户能选安装目录
+  allowToChangeInstallationDirectory: true
+  perMachine: false # 装到当前用户目录，无需管理员权限
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: 收藏小秘书
+  artifactName: ${productName}-${version}-setup-${arch}.${ext}

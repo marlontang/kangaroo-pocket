@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build and test output
+out/
+release/
+coverage/
+screenshots/
+*.tsbuildinfo
+build/icon.png
+build/icon.icns
+build/.render-icon.cjs
+
+# Local runtime data
+logs/
+*.log
+*.pid
+
+# Environment files may contain real API keys
+.env
+.env.*
+!.env.example
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local AI assistant instructions
+CLAUDE.md

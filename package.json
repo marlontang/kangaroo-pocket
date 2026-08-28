@@ -1,0 +1,37 @@
+{
+  "name": "kangaroo-pocket",
+  "version": "0.1.0",
+  "description": "收藏小秘书 — 个人信息自动分类收纳",
+  "main": "./out/main/index.js",
+  "author": "tango",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "test:e2e": "electron-vite build && node test/e2e.mjs",
+    "test:ui": "electron-vite build && node test/ui.mjs",
+    "test:focus": "electron-vite build && node test/focus.mjs",
+    "test:llm": "RUN_LLM_TESTS=1 vitest run test/integration.llm.test.ts",
+    "test:pkg": "node test/packaged-smoke.mjs",
+    "icon": "node build/make-icon.mjs",
+    "dist": "electron-vite build && electron-builder --mac --arm64"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.4.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11",
+    "zustand": "^5.0.15"
+  }
+}

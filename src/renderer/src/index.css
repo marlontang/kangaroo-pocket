@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+/*
+ * 配色取自 QQ macOS 暗色主题的实测采样：
+ * 整个窗口用同一个深灰底，层次靠「比底色浅一档」的面来表达，
+ * 而不是靠饱和色块。强调色只用在徽标/链接这种小面积上。
+ */
+:root {
+  --c-app: #ffffff; /* 窗口底色 */
+  --c-panel: #f7f7f7; /* 侧栏 */
+  --c-raised: #ececec; /* 气泡、输入框等「浮起」的面 */
+  --c-sunken: #e4e4e4; /* 时间药丸等「下沉」的面，比底色更深一档 */
+  --c-raised-fg: #1a1a1a;
+  --c-active: #dcdcdc; /* 选中态 */
+  --c-hover: #e8e8e8;
+  --c-line: #e3e3e3;
+  --c-fg: #1a1a1a; /* 主文字 */
+  --c-muted: #8a8a8a; /* 摘要、时间戳 */
+  --c-accent: #148fff;
+  --c-danger: #e5484d;
+  --c-warn: #b7791f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-app: #222222;
+    --c-panel: #222222;
+    --c-raised: #3b3b3b;
+    --c-sunken: #181818;
+    --c-raised-fg: #ffffff;
+    --c-active: #484848;
+    --c-hover: #2e2e2e;
+    --c-line: #333333;
+    --c-fg: #ededed;
+    --c-muted: #808080;
+    --c-accent: #148fff;
+    --c-danger: #ff6b6e;
+    --c-warn: #e0a03c;
+  }
+}
+
+/* 映射成 Tailwind 颜色，组件里直接写 bg-app / text-muted，不用再堆 dark: 变体 */
+@theme inline {
+  --color-app: var(--c-app);
+  --color-panel: var(--c-panel);
+  --color-raised: var(--c-raised);
+  --color-sunken: var(--c-sunken);
+  --color-raised-fg: var(--c-raised-fg);
+  --color-active: var(--c-active);
+  --color-hover: var(--c-hover);
+  --color-line: var(--c-line);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-accent: var(--c-accent);
+  --color-danger: var(--c-danger);
+  --color-warn: var(--c-warn);
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--c-app);
+  color: var(--c-fg);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* 标题栏拖拽区（配合 titleBarStyle: hiddenInset） */
+.drag {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* 消息正文与输入框允许选中复制 */
+.selectable {
+  user-select: text;
+  cursor: auto;
+}
+
+/* 细滚动条，贴近原生 IM 观感 */
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--c-muted) 35%, transparent);
+  border-radius: 4px;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--c-muted) 55%, transparent);
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
