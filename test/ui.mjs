@@ -68,20 +68,10 @@ try {
     return window.__t.text().includes('请填写分类名')
   `))
 
-  check('点击 emoji 可选中', await evaluate(`
-    const emojis = [...document.querySelectorAll('button')].filter(b => b.textContent.trim() === '🚀')
-    if (!emojis.length) return false
-    emojis[0].click()
-    await new Promise(r => setTimeout(r, 200))
-    return emojis[0].className.includes('bg-active')
+  check('分类弹窗不再显示 emoji 头像选择器', await evaluate(`
+    return !window.__t.text().includes('头像') &&
+      ![...document.querySelectorAll('button')].some(b => b.textContent.trim() === '🚀')
   `))
-
-  check('头像候选正好排满 3 行', await evaluate(`
-    const btns = [...document.querySelectorAll('button')]
-      .filter(b => b.className.includes('h-9 w-9'))
-    const rows = new Set(btns.map(b => Math.round(b.getBoundingClientRect().top))).size
-    return btns.length === 27 && rows === 3 ? true : ('数量=' + btns.length + ' 行数=' + rows)
-  `) === true)
 
 
 

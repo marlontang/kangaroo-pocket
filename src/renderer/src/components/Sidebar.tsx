@@ -1,4 +1,13 @@
 import { useState } from 'react'
+import {
+  CircleHelp,
+  Image as ImageIcon,
+  Plus,
+  Search,
+  Settings,
+  Trash2,
+  type LucideIcon
+} from 'lucide-react'
 import type { CategoryWithMeta, ConversationId } from '@shared/types'
 import { useStore } from '../store'
 import { CategoryDialog } from './CategoryDialog'
@@ -20,8 +29,8 @@ function timeLabel(ts: number | null): string {
 }
 
 interface RowProps {
-  emoji: string
   avatarSrc?: string
+  icon?: LucideIcon
   name: string
   preview: string
   time?: string
@@ -32,8 +41,8 @@ interface RowProps {
 }
 
 function Row({
-  emoji,
   avatarSrc,
+  icon,
   name,
   preview,
   time,
@@ -50,7 +59,7 @@ function Row({
         active ? 'bg-active' : 'hover:bg-hover'
       }`}
     >
-      <Avatar name={name} emoji={emoji} imageSrc={avatarSrc} size={40} />
+      <Avatar name={name} imageSrc={avatarSrc} icon={icon} size={40} />
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline justify-between gap-2">
           <span className="truncate text-[13px] font-medium text-fg">{name}</span>
@@ -117,7 +126,7 @@ export function Sidebar({
         void (async () => {
           const revived = await window.api.createCategory({
             name: category.name,
-            emoji: category.emoji,
+            emoji: '',
             description: category.description
           })
           for (const m of affected) await window.api.moveMessage(m.id, revived.id)
@@ -139,7 +148,7 @@ export function Sidebar({
           title="搜索消息 (⌘F)"
           className="flex flex-1 items-center gap-2 rounded-lg bg-raised px-2.5 py-1.5 text-left text-[12px] text-muted transition-opacity hover:opacity-80"
         >
-          <span className="text-[11px]">🔍</span>
+          <Search size={14} strokeWidth={1.8} aria-hidden="true" />
           搜索
         </button>
         <button
@@ -147,13 +156,12 @@ export function Sidebar({
           title="新建分类"
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-raised text-base text-muted transition-opacity hover:opacity-80"
         >
-          ＋
+          <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
         </button>
       </div>
 
       <nav className="no-drag scroll-thin flex-1 space-y-0.5 overflow-y-auto px-2 pb-2">
         <Row
-          emoji=""
           avatarSrc={KANGAROO_LOGO}
           name="袋鼠"
           preview="全部消息 · 发送入口"
@@ -166,7 +174,7 @@ export function Sidebar({
         {categories.map((c) => (
           <Row
             key={c.id}
-            emoji={c.emoji}
+            icon={c.isSystem ? ImageIcon : undefined}
             name={c.name}
             preview={c.lastMessage ?? '暂无消息'}
             time={timeLabel(c.lastMessageAt)}
@@ -182,7 +190,7 @@ export function Sidebar({
 
         {unclassifiedCount > 0 && (
           <Row
-            emoji="❓"
+            icon={CircleHelp}
             name="未分类"
             preview={`${unclassifiedCount} 条待处理`}
             active={activeId === 'unclassified'}
@@ -192,7 +200,7 @@ export function Sidebar({
 
         {trashCount > 0 && (
           <Row
-            emoji="🗑️"
+            icon={Trash2}
             name="垃圾箱"
             preview={`${trashCount} 项`}
             active={activeId === 'trash'}
@@ -204,8 +212,8 @@ export function Sidebar({
           onClick={() => setDialog({ mode: 'create' })}
           className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-muted transition-colors hover:bg-hover"
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-dashed border-line text-lg">
-            ＋
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-dashed border-line">
+            <Plus size={18} strokeWidth={1.8} aria-hidden="true" />
           </span>
           新建分类
         </button>
@@ -216,7 +224,8 @@ export function Sidebar({
           onClick={onOpenSettings}
           className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] text-muted transition-colors hover:bg-hover"
         >
-          ⚙️ 设置
+          <Settings size={17} strokeWidth={1.8} aria-hidden="true" />
+          设置
         </button>
       </div>
 

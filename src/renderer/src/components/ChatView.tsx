@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Inbox, PackageOpen, Trash2 } from 'lucide-react'
 import { useStore } from '../store'
 import { MessageBubble } from './MessageBubble'
 import { Composer } from './Composer'
@@ -82,9 +83,10 @@ function TrashBar() {
 
 function EmptyState({ isSecretary, isTrash }: { isSecretary: boolean; isTrash?: boolean }) {
   const { settings } = useStore()
+  const EmptyIcon = isTrash ? Trash2 : isSecretary ? PackageOpen : Inbox
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 px-8 text-center">
-      <div className="text-4xl">{isTrash ? '🗑️' : isSecretary ? '🗂️' : '📭'}</div>
+      <EmptyIcon size={38} strokeWidth={1.5} className="text-muted" aria-hidden="true" />
       <p className="text-sm text-muted">
         {isTrash
           ? '垃圾箱是空的。删除的消息会先放到这里，随时可以还原。'

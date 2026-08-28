@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CircleHelp, LoaderCircle } from 'lucide-react'
 import type { Message } from '@shared/types'
 import { useStore } from '../store'
 import { FloatingMenu } from './FloatingMenu'
@@ -13,7 +14,7 @@ function MessageAvatar({ message }: { message: Message }) {
   const { categories } = useStore()
   const category = categories.find((c) => c.id === message.categoryId)
 
-  if (category) return <Avatar name={category.name} emoji={category.emoji} size={36} />
+  if (category) return <Avatar name={category.name} size={36} />
 
   // 还没归类的用符号占位，不用文字头像 —— 文字头像意味着「属于某个分类」
   if (message.status === 'pending') {
@@ -22,7 +23,7 @@ function MessageAvatar({ message }: { message: Message }) {
         title="分类中"
         className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-full bg-raised text-base opacity-50"
       >
-        ⏳
+        <LoaderCircle size={17} className="animate-spin" aria-hidden="true" />
       </span>
     )
   }
@@ -34,7 +35,7 @@ function MessageAvatar({ message }: { message: Message }) {
       title={`未分类${message.error ? ` · ${message.error}` : ''}（右键可重新分类）`}
       className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-full bg-raised text-base"
     >
-      ❓
+      <CircleHelp size={17} aria-hidden="true" />
     </span>
   )
 }

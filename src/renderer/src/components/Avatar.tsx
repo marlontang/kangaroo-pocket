@@ -40,11 +40,13 @@ export function Avatar({
   name,
   emoji,
   imageSrc,
+  icon: Icon,
   size = 40
 }: {
   name: string
   emoji?: string | null
   imageSrc?: string
+  icon?: LucideIcon
   size?: number
 }) {
   // 全应用统一圆形
@@ -58,6 +60,18 @@ export function Avatar({
         className="flex shrink-0 select-none items-center justify-center overflow-hidden bg-raised"
       >
         <img src={imageSrc} alt="" className="h-full w-full object-cover" />
+      </span>
+    )
+  }
+
+  if (Icon) {
+    return (
+      <span
+        title={name}
+        style={base}
+        className="flex shrink-0 select-none items-center justify-center bg-raised text-muted"
+      >
+        <Icon size={Math.round(size * 0.48)} strokeWidth={1.8} aria-hidden="true" />
       </span>
     )
   }
@@ -89,3 +103,4 @@ export function Avatar({
     </span>
   )
 }
+import type { LucideIcon } from 'lucide-react'

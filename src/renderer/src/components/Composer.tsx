@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { ImagePlus, X } from 'lucide-react'
 import { useStore } from '../store'
 
 /** 按后缀判断是不是图片 —— 和主进程 images.ts 的 ALLOWED_EXT 保持一致 */
@@ -125,9 +126,9 @@ export function Composer({ placeholder }: { placeholder?: string }) {
         <button
           onClick={() => fileRef.current?.click()}
           title="发送图片"
-          className="flex h-7 w-7 items-center justify-center rounded text-base opacity-70 transition-opacity hover:opacity-100"
+          className="flex h-7 w-7 items-center justify-center rounded text-muted transition-colors hover:bg-hover hover:text-fg"
         >
-          🖼️
+          <ImagePlus size={17} strokeWidth={1.8} aria-hidden="true" />
         </button>
         <input
           ref={fileRef}
@@ -156,7 +157,7 @@ export function Composer({ placeholder }: { placeholder?: string }) {
                 title="移除"
                 className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-active text-xs text-fg shadow hover:opacity-80"
               >
-                ✕
+                <X size={12} aria-hidden="true" />
               </button>
             </div>
           ))}

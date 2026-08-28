@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CircleHelp } from 'lucide-react'
 import type { Message } from '@shared/types'
 import { useStore } from '../store'
 
@@ -87,7 +88,10 @@ export function SearchPanel({
                 className="block w-full border-b border-line px-4 py-3 text-left last:border-0 hover:bg-hover"
               >
                 <div className="mb-1 flex items-center gap-2 text-[11px] text-muted">
-                  <span>{c ? `${c.emoji} ${c.name}` : '❓ 未分类'}</span>
+                  <span className="flex items-center gap-1">
+                    {!c && <CircleHelp size={12} aria-hidden="true" />}
+                    {c?.name ?? '未分类'}
+                  </span>
                   <span>{new Date(m.createdAt).toLocaleString('zh-CN')}</span>
                 </div>
                 <div className="text-sm leading-relaxed text-fg">

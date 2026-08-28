@@ -1,38 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Category } from '@shared/types'
 import { useStore } from '../store'
-import { Avatar } from './Avatar'
-
-// 每行放得下 9 个，共 3 行
-const EMOJI_CHOICES = [
-  '📁',
-  '📌',
-  '⭐',
-  '🎯',
-  '💼',
-  '📊',
-  '💻',
-  '📅',
-  '🤝',
-  '🚀',
-  '⚙️',
-  '🐛',
-  '🔧',
-  '📦',
-  '🌐',
-  '🧠',
-  '🤖',
-  '💡',
-  '🏠',
-  '🛒',
-  '🍜',
-  '☕',
-  '✈️',
-  '💰',
-  '📚',
-  '🎮',
-  '❤️'
-]
 
 export function CategoryDialog({
   category,
@@ -43,8 +11,6 @@ export function CategoryDialog({
 }) {
   const { refreshCategories, showToast } = useStore()
   const [name, setName] = useState(category?.name ?? '')
-  // 默认不选中任何 emoji —— 没选就用文字头像
-  const [emoji, setEmoji] = useState(category?.emoji ?? '')
   const [description, setDescription] = useState(category?.description ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -66,9 +32,9 @@ export function CategoryDialog({
     setError('')
     try {
       if (category) {
-        await window.api.updateCategory(category.id, { name, emoji, description })
+        await window.api.updateCategory(category.id, { name, emoji: '', description })
       } else {
-        await window.api.createCategory({ name, emoji, description })
+        await window.api.createCategory({ name, emoji: '', description })
       }
       await refreshCategories()
       showToast(category ? '分类已更新' : `已创建分类「${name.trim()}」`)
@@ -96,31 +62,6 @@ export function CategoryDialog({
         <h2 className="mb-4 text-[15px] font-medium text-fg">
           {category ? '编辑分类' : '新建分类'}
         </h2>
-
-        <div className="mb-2 flex items-center justify-between">
-          <label className="text-xs text-muted">头像</label>
-          <div className="flex items-center gap-2">
-            <Avatar name={name.trim() || '新分类'} emoji={emoji} size={32} />
-            {emoji && (
-              <button onClick={() => setEmoji('')} className="text-xs text-accent hover:underline">
-                改用文字头像
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="mb-4 flex flex-wrap gap-1.5">
-          {EMOJI_CHOICES.map((e) => (
-            <button
-              key={e}
-              onClick={() => setEmoji(e)}
-              className={`flex h-9 w-9 items-center justify-center rounded-lg text-lg transition-colors ${
-                emoji === e ? 'bg-active ring-2 ring-accent' : 'bg-raised hover:opacity-80'
-              }`}
-            >
-              {e}
-            </button>
-          ))}
-        </div>
 
         <label className="mb-1 block text-xs text-muted">分类名</label>
         <input

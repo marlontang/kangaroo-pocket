@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { X } from 'lucide-react'
 import type { DiscoveryResult, ReclassifyEstimate, TestConnectionResult } from '@shared/types'
 import { DEFAULT_SECRETARY_PROMPT } from '@shared/defaults'
 import { useStore } from '../store'
@@ -187,7 +188,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
             title={busy ? '有任务进行中' : '关闭'}
             className="rounded-lg px-2 py-1 text-sm text-muted hover:bg-hover disabled:opacity-40"
           >
-            ✕
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Plus, X } from 'lucide-react'
 import type { DiscoveredCategory, DiscoveryResult } from '@shared/types'
 import { useStore } from '../store'
 import { Avatar } from './Avatar'
@@ -139,7 +140,7 @@ export function DiscoveryDialog({
                     title="删除这个分类"
                     className="mt-1.5 rounded px-2 py-1 text-xs text-muted hover:bg-hover hover:text-danger"
                   >
-                    ✕
+                    <X size={14} aria-hidden="true" />
                   </button>
                 </div>
               ))}
@@ -147,7 +148,10 @@ export function DiscoveryDialog({
                 onClick={() => setRows([...rows, { name: '', description: '' }])}
                 className="w-full rounded-lg border border-dashed border-line py-2 text-xs text-muted hover:bg-hover"
               >
-                ＋ 添加分类
+                <span className="inline-flex items-center gap-1.5">
+                  <Plus size={14} aria-hidden="true" />
+                  添加分类
+                </span>
               </button>
             </div>
           ) : (
