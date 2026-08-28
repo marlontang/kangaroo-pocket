@@ -5,6 +5,8 @@ import { CategoryDialog } from './CategoryDialog'
 import { FloatingMenu } from './FloatingMenu'
 import { Avatar } from './Avatar'
 
+const KANGAROO_LOGO = new URL('../../../../build/logo.png', import.meta.url).href
+
 function timeLabel(ts: number | null): string {
   if (!ts) return ''
   const d = new Date(ts)
@@ -19,6 +21,7 @@ function timeLabel(ts: number | null): string {
 
 interface RowProps {
   emoji: string
+  avatarSrc?: string
   name: string
   preview: string
   time?: string
@@ -28,7 +31,17 @@ interface RowProps {
   onContextMenu?: (e: React.MouseEvent) => void
 }
 
-function Row({ emoji, name, preview, time, unread, active, onClick, onContextMenu }: RowProps) {
+function Row({
+  emoji,
+  avatarSrc,
+  name,
+  preview,
+  time,
+  unread,
+  active,
+  onClick,
+  onContextMenu
+}: RowProps) {
   return (
     <button
       onClick={onClick}
@@ -37,7 +50,7 @@ function Row({ emoji, name, preview, time, unread, active, onClick, onContextMen
         active ? 'bg-active' : 'hover:bg-hover'
       }`}
     >
-      <Avatar name={name} emoji={emoji} size={40} />
+      <Avatar name={name} emoji={emoji} imageSrc={avatarSrc} size={40} />
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline justify-between gap-2">
           <span className="truncate text-[13px] font-medium text-fg">{name}</span>
@@ -140,7 +153,8 @@ export function Sidebar({
 
       <nav className="no-drag scroll-thin flex-1 space-y-0.5 overflow-y-auto px-2 pb-2">
         <Row
-          emoji="🗂️"
+          emoji=""
+          avatarSrc={KANGAROO_LOGO}
           name="袋鼠"
           preview="全部消息 · 发送入口"
           active={activeId === 'all'}

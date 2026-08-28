@@ -39,14 +39,28 @@ export function initialsOf(name: string): string {
 export function Avatar({
   name,
   emoji,
+  imageSrc,
   size = 40
 }: {
   name: string
   emoji?: string | null
+  imageSrc?: string
   size?: number
 }) {
   // 全应用统一圆形
   const base = { width: size, height: size, borderRadius: '9999px' } as const
+
+  if (imageSrc) {
+    return (
+      <span
+        title={name}
+        style={base}
+        className="flex shrink-0 select-none items-center justify-center overflow-hidden bg-raised"
+      >
+        <img src={imageSrc} alt="" className="h-full w-full object-cover" />
+      </span>
+    )
+  }
 
   if (emoji) {
     return (

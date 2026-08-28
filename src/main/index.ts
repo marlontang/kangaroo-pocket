@@ -80,6 +80,13 @@ const broadcast = (message: Message): void => {
 
 app.whenReady().then(() => {
   migrateLegacyUserData()
+
+  // Direct Electron launches otherwise keep Electron's default Dock icon.
+  if (process.platform === 'darwin' && !app.isPackaged) {
+    const iconPath = join(app.getAppPath(), 'build', 'logo.png')
+    if (existsSync(iconPath)) app.dock?.setIcon(iconPath)
+  }
+
   serveImages()
 
   const db = createDb(join(app.getPath('userData'), 'kangaroo-pocket.db'))
