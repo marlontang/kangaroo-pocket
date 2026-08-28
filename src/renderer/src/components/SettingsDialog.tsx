@@ -173,7 +173,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
   return (
     // 遮罩从侧栏右侧开始 —— 侧栏要保持可点，这样点分类能一步切过去
     <div
-      className="no-drag fixed inset-y-0 left-[260px] right-0 z-30 flex items-center justify-center bg-black/45 p-6"
+      className="no-drag fixed inset-y-0 left-[324px] right-0 z-30 flex items-center justify-center bg-black/45 p-6"
       onClick={requestClose}
     >
       <div
@@ -181,7 +181,10 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-3.5">
-          <h2 className="text-[15px] font-medium text-fg">设置</h2>
+          <div>
+            <h2 className="text-[15px] font-medium text-fg">小袋鼠</h2>
+            <p className="mt-0.5 text-[11px] text-muted">能力与模型</p>
+          </div>
           <button
             onClick={requestClose}
             disabled={busy}

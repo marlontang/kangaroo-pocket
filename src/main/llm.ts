@@ -46,7 +46,7 @@ export async function chat(
   messages: ChatMessage[],
   opts: ChatOptions = {}
 ): Promise<string> {
-  if (!config.apiKey) throw new LlmError('未配置 API Key，请到设置中填写', false)
+  if (!config.apiKey) throw new LlmError('未配置 API Key，请到「小袋鼠」中填写', false)
 
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS
   const controller = new AbortController()

@@ -7,6 +7,7 @@
  */
 :root {
   --c-app: #ffffff; /* 窗口底色 */
+  --c-rail: #f1f1f1; /* 最左侧功能栏 */
   --c-panel: #f7f7f7; /* 侧栏 */
   --c-raised: #ececec; /* 气泡、输入框等「浮起」的面 */
   --c-sunken: #e4e4e4; /* 时间药丸等「下沉」的面，比底色更深一档 */
@@ -28,6 +29,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --c-app: #222222;
+    --c-rail: #1b1b1b;
     --c-panel: #222222;
     --c-raised: #3b3b3b;
     --c-sunken: #181818;
@@ -50,6 +52,7 @@
 /* 映射成 Tailwind 颜色，组件里直接写 bg-app / text-muted，不用再堆 dark: 变体 */
 @theme inline {
   --color-app: var(--c-app);
+  --color-rail: var(--c-rail);
   --color-panel: var(--c-panel);
   --color-raised: var(--c-raised);
   --color-sunken: var(--c-sunken);
@@ -95,6 +98,19 @@ body {
 .selectable {
   user-select: text;
   cursor: auto;
+}
+
+/* 左栏里的品牌入口沿用原 Logo，只去掉色彩，避免小尺寸下生成图标走样。 */
+.monochrome-logo {
+  filter: grayscale(1) contrast(1.35);
+  opacity: 0.78;
+}
+
+@media (prefers-color-scheme: dark) {
+  .monochrome-logo {
+    filter: grayscale(1) contrast(1.2) brightness(1.15);
+    opacity: 0.82;
+  }
 }
 
 /* 细滚动条，贴近原生 IM 观感 */

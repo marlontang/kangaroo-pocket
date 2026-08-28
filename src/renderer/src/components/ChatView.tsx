@@ -96,7 +96,7 @@ function EmptyState({ isSecretary, isTrash }: { isSecretary: boolean; isTrash?: 
       </p>
       {isSecretary && settings && !settings.hasApiKey && (
         <p className="mt-1 rounded-lg border border-line px-3 py-1.5 text-xs text-warn">
-          还没配置 API Key，消息会被保存但不会自动分类 —— 请先到「设置」填写。
+          还没配置 API Key，消息会被保存但不会自动分类 —— 请先到「小袋鼠」填写。
         </p>
       )}
     </div>

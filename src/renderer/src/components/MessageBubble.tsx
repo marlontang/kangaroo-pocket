@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CircleHelp, LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react'
 import type { Message } from '@shared/types'
 import { useStore } from '../store'
 import { FloatingMenu } from './FloatingMenu'
@@ -28,16 +28,8 @@ function MessageAvatar({ message }: { message: Message }) {
     )
   }
 
-  // 头像只表达状态，不承担操作 —— 重试走右键菜单的「重新分类」，
-  // 同一个操作没必要有两个入口。失败原因放 title 里备查。
-  return (
-    <span
-      title={`未分类${message.error ? ` · ${message.error}` : ''}（右键可重新分类）`}
-      className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-full bg-raised text-base"
-    >
-      <CircleHelp size={17} aria-hidden="true" />
-    </span>
-  )
+  // 分类失败后与中栏保持一致，统一使用「未分」文字头像。
+  return <Avatar name="未分类" size={36} />
 }
 
 /** 全屏大图。Esc 或点击空白处关闭。 */
@@ -111,8 +103,8 @@ export function MessageBubble({ message }: { message: Message }) {
 
   return (
     // 头像固定在右侧顶部；气泡靠 flex 收缩到内容宽度，最宽占满剩余空间。
-    // 加了头像后右侧多出约 44px 的视觉重量，两侧边距相应收到 24px。
-    <div className="flex items-start justify-end gap-2 px-6">
+    // 头像一侧比气泡侧更贴近窗口边缘，右边保留 12px 的安全间距即可。
+    <div className="flex items-start justify-end gap-2 pl-6 pr-3">
       <div className="flex min-w-0 max-w-full flex-col items-end">
         {/*
           中性灰气泡：饱和色块长时间盯着很刺眼，层次靠「比底色浅一档」来表达。

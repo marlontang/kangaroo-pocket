@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react'
 import {
-  CircleHelp,
   FileInput,
   FileOutput,
   Image as ImageIcon,
   Menu as MenuIcon,
+  MessageCircle,
   Plus,
   Search,
-  Settings,
   Trash2,
   type LucideIcon
 } from 'lucide-react'
@@ -96,7 +95,6 @@ export function Sidebar({
   const {
     categories,
     unclassifiedCount,
-    trashCount,
     activeId,
     selectConversation,
     refreshCategories,
@@ -179,106 +177,129 @@ export function Sidebar({
   }
 
   return (
-    <aside className="relative z-40 flex w-[260px] shrink-0 flex-col border-r border-line bg-panel">
-      {/* 顶部留给 macOS 红绿灯按钮 */}
-      <div className="drag h-11 shrink-0" />
+    <aside className="relative z-40 flex w-[324px] shrink-0">
+      {/* QQ 式左侧功能栏：顶端仍保留 macOS 红绿灯的安全区域。 */}
+      <nav className="flex w-16 shrink-0 flex-col border-r border-line bg-rail">
+        <div className="drag h-11 shrink-0" />
 
-      <div className="no-drag flex shrink-0 items-center gap-2 px-3 pb-2">
-        <button
-          onClick={onOpenSearch}
-          title="搜索消息 (⌘F)"
-          className="flex flex-1 items-center gap-2 rounded-lg bg-raised px-2.5 py-1.5 text-left text-[12px] text-muted transition-opacity hover:opacity-80"
-        >
-          <Search size={14} strokeWidth={1.8} aria-hidden="true" />
-          搜索
-        </button>
-        <button
-          onClick={() => setDialog({ mode: 'create' })}
-          title="新建分类"
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-raised text-base text-muted transition-opacity hover:opacity-80"
-        >
-          <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
-        </button>
-      </div>
+        <div className="no-drag flex flex-col items-center gap-1.5 px-2 py-1">
+          <button
+            onClick={() => select('all')}
+            title="消息"
+            aria-label="消息"
+            className={`relative flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
+              activeId !== 'unclassified' && activeId !== 'trash'
+                ? 'bg-active text-fg'
+                : 'text-muted hover:bg-hover hover:text-fg'
+            }`}
+          >
+            <MessageCircle size={22} strokeWidth={1.8} aria-hidden="true" />
+            <span className="sr-only">消息</span>
+          </button>
 
-      <nav className="no-drag scroll-thin flex-1 space-y-0.5 overflow-y-auto px-2 pb-2">
-        <Row
-          avatarSrc={KANGAROO_LOGO}
-          name="袋鼠"
-          preview="全部消息 · 发送入口"
-          active={activeId === 'all'}
-          onClick={() => select('all')}
-        />
+          <button
+            onClick={onOpenSettings}
+            title="小袋鼠"
+            aria-label="小袋鼠"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-muted transition-colors hover:bg-hover hover:text-fg"
+          >
+            <img
+              src={KANGAROO_LOGO}
+              alt=""
+              className="monochrome-logo h-6 w-6 rounded-full object-cover"
+            />
+            <span className="sr-only">小袋鼠</span>
+          </button>
 
-        <div className="px-2.5 pb-1 pt-3 text-[11px] font-medium text-muted">分类</div>
+        </div>
 
-        {categories.map((c) => (
+        <div className="no-drag mt-auto flex flex-col items-center gap-1.5 px-2 pb-2">
+          <button
+            onClick={() => select('trash')}
+            title="垃圾箱"
+            aria-label="垃圾箱"
+            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
+              activeId === 'trash'
+                ? 'bg-active text-fg'
+                : 'text-muted hover:bg-hover hover:text-fg'
+            }`}
+          >
+            <Trash2 size={20} strokeWidth={1.8} aria-hidden="true" />
+            <span className="sr-only">垃圾箱</span>
+          </button>
+          <button
+            ref={dataButtonRef}
+            onClick={toggleDataMenu}
+            disabled={transferring !== null}
+            title="数据菜单"
+            aria-label="数据菜单"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-muted transition-colors hover:bg-hover hover:text-fg disabled:opacity-40"
+          >
+            <MenuIcon size={20} strokeWidth={1.8} aria-hidden="true" />
+            <span className="sr-only">数据菜单</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* 中栏只承载搜索和会话列表，与右侧聊天内容职责分离。 */}
+      <div className="flex w-[260px] shrink-0 flex-col border-r border-line bg-panel">
+        <div className="drag h-11 shrink-0" />
+
+        <div className="no-drag flex shrink-0 items-center gap-2 px-3 pb-2">
+          <button
+            onClick={onOpenSearch}
+            title="搜索消息 (⌘F)"
+            className="flex flex-1 items-center gap-2 rounded-lg bg-raised px-2.5 py-1.5 text-left text-[12px] text-muted transition-opacity hover:opacity-80"
+          >
+            <Search size={14} strokeWidth={1.8} aria-hidden="true" />
+            搜索
+          </button>
+          <button
+            onClick={() => setDialog({ mode: 'create' })}
+            title="新建分类"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-raised text-base text-muted transition-opacity hover:opacity-80"
+          >
+            <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
+            <span className="sr-only">新建分类</span>
+          </button>
+        </div>
+
+        <nav className="no-drag scroll-thin flex-1 space-y-0.5 overflow-y-auto px-2 pb-2">
           <Row
-            key={c.id}
-            icon={c.isSystem ? ImageIcon : undefined}
-            iconTone={c.isSystem ? 'image' : undefined}
-            name={c.name}
-            preview={c.lastMessage ?? '暂无消息'}
-            time={timeLabel(c.lastMessageAt)}
-            unread={c.unreadCount}
-            active={activeId === c.id}
-            onClick={() => select(c.id)}
-            onContextMenu={(e) => {
-              e.preventDefault()
-              setMenu({ x: e.clientX, y: e.clientY, category: c })
-            }}
+            avatarSrc={KANGAROO_LOGO}
+            name="袋鼠"
+            preview="全部消息 · 发送入口"
+            active={activeId === 'all'}
+            onClick={() => select('all')}
           />
-        ))}
 
-        {unclassifiedCount > 0 && (
+          <div className="px-2.5 pb-1 pt-3 text-[11px] font-medium text-muted">分类</div>
+
+          {categories.map((c) => (
+            <Row
+              key={c.id}
+              icon={c.isSystem ? ImageIcon : undefined}
+              iconTone={c.isSystem ? 'image' : undefined}
+              name={c.name}
+              preview={c.lastMessage ?? '暂无消息'}
+              time={timeLabel(c.lastMessageAt)}
+              unread={c.unreadCount}
+              active={activeId === c.id}
+              onClick={() => select(c.id)}
+              onContextMenu={(e) => {
+                e.preventDefault()
+                setMenu({ x: e.clientX, y: e.clientY, category: c })
+              }}
+            />
+          ))}
+
           <Row
-            icon={CircleHelp}
             name="未分类"
-            preview={`${unclassifiedCount} 条待处理`}
+            preview={unclassifiedCount > 0 ? '待处理消息' : '暂无消息'}
             active={activeId === 'unclassified'}
             onClick={() => select('unclassified')}
           />
-        )}
-
-        {trashCount > 0 && (
-          <Row
-            icon={Trash2}
-            iconTone="trash"
-            name="垃圾箱"
-            preview={`${trashCount} 项`}
-            active={activeId === 'trash'}
-            onClick={() => select('trash')}
-          />
-        )}
-
-        <button
-          onClick={() => setDialog({ mode: 'create' })}
-          className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-muted transition-colors hover:bg-hover"
-        >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-dashed border-line">
-            <Plus size={18} strokeWidth={1.8} aria-hidden="true" />
-          </span>
-          新建分类
-        </button>
-      </nav>
-
-      <div className="no-drag flex shrink-0 items-center gap-1 border-t border-line p-2">
-        <button
-          ref={dataButtonRef}
-          onClick={toggleDataMenu}
-          disabled={transferring !== null}
-          title="数据菜单"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-hover hover:text-fg disabled:opacity-40"
-        >
-          <MenuIcon size={18} strokeWidth={1.8} aria-hidden="true" />
-        </button>
-        <button
-          onClick={onOpenSettings}
-          className="flex h-9 flex-1 items-center gap-2 rounded-lg px-2.5 text-[13px] text-muted transition-colors hover:bg-hover"
-        >
-          <Settings size={17} strokeWidth={1.8} aria-hidden="true" />
-          设置
-        </button>
+        </nav>
       </div>
 
       {dataMenu && (
