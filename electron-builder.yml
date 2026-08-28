@@ -1,5 +1,5 @@
-appId: com.tango.collecthistory
-productName: 收藏小秘书
+appId: com.tango.kangaroopocket
+productName: kangaroo-pocket
 copyright: Copyright © 2026 tango
 
 directories:
@@ -24,7 +24,7 @@ mac:
   identity: null
 
 dmg:
-  title: 收藏小秘书
+  title: kangaroo-pocket
   contents:
     - x: 140
       y: 200
@@ -50,5 +50,5 @@ nsis:
   perMachine: false # 装到当前用户目录，无需管理员权限
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: 收藏小秘书
+  shortcutName: kangaroo-pocket
   artifactName: ${productName}-${version}-setup-${arch}.${ext}

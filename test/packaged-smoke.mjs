@@ -9,7 +9,7 @@ import { mkdtempSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-const APP = 'release/mac-arm64/收藏小秘书.app/Contents/MacOS/收藏小秘书'
+const APP = 'release/mac-arm64/kangaroo-pocket.app/Contents/MacOS/kangaroo-pocket'
 const PORT = 9444
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 let failures = 0

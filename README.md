@@ -1,6 +1,6 @@
-# Kangaroo Pocket（收藏小秘书）
+# kangaroo-pocket
 
-Kangaroo Pocket 是一款本地优先的桌面信息收纳工具。把文字或图片发给「小秘书」，应用会先在本地保存内容，再调用兼容 OpenAI 协议的大模型自动分类到「生活」「工作」「项目」等会话中。
+kangaroo-pocket 是一款本地优先的桌面信息收纳工具。把文字或图片发给「小秘书」，应用会先在本地保存内容，再调用兼容 OpenAI 协议的大模型自动分类到「生活」「工作」「项目」等会话中。
 
 应用支持 macOS 和 Windows，基于 Electron、React、TypeScript 与本地 SQLite 构建。消息数据保存在本机；AI 只负责判断分类，不会改写原始内容。
 

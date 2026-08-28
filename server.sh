@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 收藏小秘书 —— 应用管理脚本
+# kangaroo-pocket - 应用管理脚本
 #
 #   ./server.sh start     启动应用
 #   ./server.sh stop      退出应用
@@ -18,7 +18,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
-APP_NAME="收藏小秘书"
+APP_NAME="kangaroo-pocket"
 VERSION="$(node -p "require('./package.json').version" 2>/dev/null || echo "0.0.0")"
 ELECTRON_BIN="$(node -p "require('electron')" 2>/dev/null || true)"
 

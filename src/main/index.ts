@@ -1,4 +1,5 @@
 import { app, BrowserWindow, shell } from 'electron'
+import { cpSync, existsSync, readdirSync, renameSync } from 'node:fs'
 import { join } from 'node:path'
 import { createDb } from './db'
 import { createClassifier } from './classifier'
@@ -14,6 +15,29 @@ registerImageScheme()
 
 let mainWindow: BrowserWindow | null = null
 
+function migrateLegacyUserData(): void {
+  const userData = app.getPath('userData')
+  const database = join(userData, 'kangaroo-pocket.db')
+  if (existsSync(database)) return
+
+  // v0.1 used the old package name as its userData directory. Preserve messages,
+  // settings, and images when upgrading to the new application name.
+  const legacyDir = join(app.getPath('appData'), 'collect-history')
+  if (existsSync(legacyDir) && legacyDir !== userData) {
+    for (const name of readdirSync(legacyDir)) {
+      const destination = join(userData, name)
+      if (!existsSync(destination)) {
+        cpSync(join(legacyDir, name), destination, { recursive: true, preserveTimestamps: true })
+      }
+    }
+  }
+
+  const legacyDatabase = join(userData, 'collect_history.db')
+  if (existsSync(legacyDatabase) && !existsSync(database)) {
+    renameSync(legacyDatabase, database)
+  }
+}
+
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1100,
@@ -21,7 +45,7 @@ function createWindow(): void {
     minWidth: 800,
     minHeight: 560,
     show: false,
-    title: '收藏小秘书',
+    title: 'kangaroo-pocket',
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 18 },
     webPreferences: {
@@ -52,9 +76,10 @@ const broadcast = (message: Message): void => {
 }
 
 app.whenReady().then(() => {
+  migrateLegacyUserData()
   serveImages()
 
-  const db = createDb(join(app.getPath('userData'), 'collect_history.db'))
+  const db = createDb(join(app.getPath('userData'), 'kangaroo-pocket.db'))
   db.seedIfEmpty()
 
   const classifier = createClassifier({

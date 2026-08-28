@@ -1,7 +1,7 @@
 {
   "name": "kangaroo-pocket",
   "version": "0.1.0",
-  "description": "收藏小秘书 — 个人信息自动分类收纳",
+  "description": "kangaroo-pocket - 本地优先的个人信息自动分类工具",
   "main": "./out/main/index.js",
   "author": "tango",
   "scripts": {
