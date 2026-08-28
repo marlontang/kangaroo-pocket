@@ -34,16 +34,10 @@ jobs:
       matrix:
         include:
           - os: macos-15
-            artifact: mac-arm64
-            command: npx electron-builder --mac --arm64 --publish never
-            files: release/*.dmg
-          - os: macos-15-intel
-            artifact: mac-x64
-            command: npx electron-builder --mac --x64 --publish never
+            artifact: mac
             files: release/*.dmg
           - os: windows-latest
             artifact: windows-x64
-            command: npx electron-builder --win --x64 --publish never
             files: release/*.exe
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -58,8 +52,14 @@ jobs:
       - name: Generate macOS icon
         if: runner.os == 'macOS'
         run: npm run icon
-      - name: Build installer
-        run: ${{ matrix.command }}
+      - name: Build macOS installers
+        if: runner.os == 'macOS'
+        run: npx electron-builder --mac --arm64 --x64 --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Build Windows installer
+        if: runner.os == 'Windows'
+        run: npx electron-builder --win --x64 --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - uses: actions/upload-artifact@v4
