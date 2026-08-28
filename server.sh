@@ -52,10 +52,10 @@ die() { err "$*"; exit 1; }
 # ── 环境检查 ───────────────────────────────────────────────
 require_node() {
   command -v node >/dev/null 2>&1 || die "未找到 node，请先安装 Node.js 20+（https://nodejs.org）"
-  local major
-  major="$(node -p "process.versions.node.split('.')[0]")"
-  if (( major < 20 )); then
-    die "Node.js 版本过低（当前 v$(node -p 'process.versions.node')），需要 20 或更高"
+  local version_ok
+  version_ok="$(node -p "const [major, minor] = process.versions.node.split('.').map(Number); major > 22 || (major === 22 && minor >= 5)")"
+  if [[ "$version_ok" != "true" ]]; then
+    die "Node.js 版本过低（当前 v$(node -p 'process.versions.node')），需要 22.5 或更高"
   fi
 }
 

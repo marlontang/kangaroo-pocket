@@ -39,7 +39,7 @@ kangaroo-pocket 是一款本地优先的桌面信息收纳工具。把文字或�
 
 ## 环境要求
 
-- Node.js 20 或更高版本
+- Node.js 22.5 或更高版本
 - npm 10 或更高版本
 - macOS 或 Windows
 - 一个兼容 OpenAI Chat Completions 接口的模型服务

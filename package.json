@@ -4,6 +4,9 @@
   "description": "kangaroo-pocket - 本地优先的个人信息自动分类工具",
   "main": "./out/main/index.js",
   "author": "tango",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
