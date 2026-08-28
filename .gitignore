@@ -7,9 +7,12 @@ release/
 coverage/
 screenshots/
 *.tsbuildinfo
-build/icon.png
 build/icon.icns
 build/.render-icon.cjs
+
+# Private design and local agent notes
+docs/
+CLAUDE.md
 
 # Local runtime data
 logs/
@@ -26,6 +29,3 @@ logs/
 .idea/
 .vscode/
 *.swp
-
-# Local AI assistant instructions
-CLAUDE.md

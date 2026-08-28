@@ -7,8 +7,18 @@ kangaroo-pocket 是一款本地优先的桌面信息收纳工具。把文字或�
 应用支持 macOS 和 Windows，基于 Electron、React、TypeScript 与本地 SQLite 构建。消息数据保存在本机；AI 只负责判断分类，不会改写原始内容。
 
 <p align="center">
-  <img src="docs/assets/kangaroo-pocket-overview.png" alt="kangaroo-pocket 三栏主界面" width="1100">
+  <img src="assets/kangaroo-pocket-overview.png" alt="kangaroo-pocket 三栏主界面" width="1100">
 </p>
+
+## 下载
+
+前往 [GitHub Releases](https://github.com/marlontang/kangaroo-pocket/releases/latest) 下载最新版：
+
+- macOS Apple Silicon（arm64）DMG
+- macOS Intel（x64）DMG
+- Windows（x64）安装程序
+
+当前安装包尚未进行代码签名。macOS 首次启动时需右键应用并选择「打开」；Windows 可能显示 SmartScreen 提示。
 
 ## 功能特性
 
@@ -111,7 +121,6 @@ src/preload/    安全的渲染进程桥接层
 src/renderer/   React 用户界面
 src/shared/     主进程与渲染进程共享类型
 test/           单元、集成和端到端测试
-docs/           产品与技术设计文档
 build/          图标生成脚本及打包资源
 ```
 
@@ -121,13 +130,6 @@ build/          图标生成脚本及打包资源
 - API Key 通过系统安全存储保存，不写入项目文件。
 - 文字在分类时会发送给用户配置的模型服务；图片不会发送给模型。
 - `.env`、运行日志、构建产物和本地缓存均已加入 `.gitignore`。
-
-## 设计文档
-
-- [产品需求](docs/PRD.md)
-- [技术设计](docs/TECH_DESIGN.md)
-- [技术决策](docs/DECISIONS.md)
-- [实现计划](docs/IMPLEMENTATION_PLAN.md)
 
 ## License
 

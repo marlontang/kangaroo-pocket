@@ -15,6 +15,7 @@ asar: true
 
 mac:
   category: public.app-category.productivity
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
   target:
     - target: dmg
       arch: [arm64]
